@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250108143431 extends AbstractMigration
+final class Version20250111095128 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -24,9 +24,9 @@ final class Version20250108143431 extends AbstractMigration
         $this->addSql('CREATE TABLE "user" (id SERIAL NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE visitor (id SERIAL NOT NULL, first_name VARCHAR(100) NOT NULL, last_name VARCHAR(100) NOT NULL, email VARCHAR(255) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_CAE5E19FE7927C74 ON visitor (email)');
-        $this->addSql('CREATE TABLE winehouse (id SERIAL NOT NULL, winemaker_id INT NOT NULL, name VARCHAR(255) NOT NULL, address VARCHAR(255) NOT NULL, city VARCHAR(100) NOT NULL, region VARCHAR(100) NOT NULL, country VARCHAR(100) NOT NULL, zip_code VARCHAR(20) NOT NULL, description TEXT DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE winehouse (id SERIAL NOT NULL, winemaker_id INT DEFAULT NULL, name VARCHAR(255) NOT NULL, address VARCHAR(255) NOT NULL, city VARCHAR(100) NOT NULL, region INT NOT NULL, zip_code VARCHAR(20) NOT NULL, average_visitors_per_month INT DEFAULT 0 NOT NULL, description TEXT DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_9F2866F3D4BC772B ON winehouse (winemaker_id)');
-        $this->addSql('CREATE TABLE winemaker (id SERIAL NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE winemaker (id SERIAL NOT NULL, genre BOOLEAN DEFAULT true NOT NULL, first_name VARCHAR(255) NOT NULL, last_name VARCHAR(255) NOT NULL, cell_phone VARCHAR(20) NOT NULL, source INT DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE messenger_messages (id BIGSERIAL NOT NULL, body TEXT NOT NULL, headers TEXT NOT NULL, queue_name VARCHAR(190) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, available_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, delivered_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_75EA56E0FB7336F0 ON messenger_messages (queue_name)');
         $this->addSql('CREATE INDEX IDX_75EA56E0E3BD61CE ON messenger_messages (available_at)');

@@ -3,41 +3,47 @@
 namespace App\Entity;
 
 use App\Repository\WinehouseRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: WinehouseRepository::class)]
 class Winehouse
 {
+    // Documents à envoyer
+    //Document d'identification de l'entreprise souvent nécessaire
+    //Nom, date de naissance, adresse du représentant du compte de Winalist (Vous) Obligatoire
+    //Pièce d'identité du représentant du compte Winalist (Vous) Obligatoire
+    //Justificatif de domicile du représentant du compte Winalist (Vous) parfois
+    //Nom, date de naissance, adresse du propriétaire de l'entreprise parfois
+    //Pièce d'identité du propriétaire de l'entreprise parfois
+    //Preuve de l'adresse du propriétaire de la société parfois
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    private $id;
+    private int $id;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $name;
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    private string $name;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $address;
-
-    #[ORM\Column(type: 'string', length: 100)]
-    private $city;
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    private string $address;
 
     #[ORM\Column(type: 'string', length: 100)]
-    private $region;
+    private string $city;
 
-    #[ORM\Column(type: 'string', length: 100)]
-    private $country;
+    #[ORM\Column(type: 'integer', nullable: false)]
+    private int $region;
 
     #[ORM\Column(type: 'string', length: 20)]
-    private $zipCode;
+    private string $zipCode;
+
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $averageVisitorsPerMonth;
 
     #[ORM\Column(type: 'text', nullable: true)]
-    private $description;
+    private string $description;
 
-//    #[ORM\ManyToOne(targetEntity: Winemaker::class, inversedBy: 'winehouses')]
-//    #[ORM\JoinColumn(nullable: false)]
-//    private $winemaker;
+    #[ORM\OneToOne(inversedBy: 'winehouse')]
+    private ?Winemaker $winemaker = null;
 
 //    #[ORM\OneToMany(mappedBy: 'winehouse', targetEntity: Experience::class)]
 //    private $experiences;
@@ -51,23 +57,21 @@ class Winehouse
      * @param $address
      * @param $city
      * @param $region
-     * @param $country
      * @param $zipCode
      * @param $description
-//     * @param $winemaker
-//     * @param $experiences
-     */
-    public function __construct($name, $address, $city, $region, $country, $zipCode, $description) // $winemaker, $experiences
+     * @param $averageVisitorsPerMonth
+ */
+    public function __construct($name, $address, $city, $region, $zipCode, $description,$winemaker, $averageVisitorsPerMonth) // $winemaker, $experiences
     {
         $this->name = $name;
         $this->address = $address;
         $this->city = $city;
         $this->region = $region;
-        $this->country = $country;
         $this->zipCode = $zipCode;
         $this->description = $description;
-//        $this->winemaker = $winemaker;
+        $this->winemaker = $winemaker;
 //        $this->experiences = $experiences;
+        $this->averageVisitorsPerMonth = $averageVisitorsPerMonth;
     }
 
     /**
@@ -84,22 +88,6 @@ class Winehouse
     public function setId($id): void
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @param mixed $name
-     */
-    public function setName($name): void
-    {
-        $this->name = $name;
     }
 
     /**
@@ -153,22 +141,6 @@ class Winehouse
     /**
      * @return mixed
      */
-    public function getCountry()
-    {
-        return $this->country;
-    }
-
-    /**
-     * @param mixed $country
-     */
-    public function setCountry($country): void
-    {
-        $this->country = $country;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getZipCode()
     {
         return $this->zipCode;
@@ -198,8 +170,55 @@ class Winehouse
         $this->description = $description;
     }
 
-    // Getters et setters
-    public function setPublishedAt(\DateTime $param)
+    /**
+     * @param mixed $averageVisitorsPerMonth
+     */
+    public function setAverageVisitorsPerMonth($averageVisitorsPerMonth): void
     {
+        $this->averageVisitorsPerMonth = $averageVisitorsPerMonth;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAverageVisitorsPerMonth()
+    {
+        return $this->averageVisitorsPerMonth;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param mixed $name
+     */
+    public function setName($name): void
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWinemaker()
+    {
+        return $this->winemaker;
+    }
+
+    /**
+     * @param mixed $winemaker
+     */
+    public function setWinemaker(?Winemaker $winemaker): self
+    {
+        $this->winemaker = $winemaker;
+        if ($winemaker !== null) {
+            $winemaker->setWinehouse($this); // Lien inverse
+        }
+        return $this;
     }
 }
